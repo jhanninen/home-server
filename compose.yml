@@ -2,8 +2,8 @@ services:
   mosquitto_init:
     image: eclipse-mosquitto:2.0.20
     environment:
-    - MQTT_USER=${MQTT_USER}
-    - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
     volumes:
       - mosquitto-conf:/mosquitto-conf
       - ./mosquitto/:/init-conf/
@@ -28,6 +28,32 @@ services:
       mosquitto_init:
         condition: service_completed_successfully
     restart: always
+
+  homebridge:
+    image: homebridge/homebridge:2025-01-11
+    environment:
+      - TZ=Europe/Helsinki
+    network_mode: host
+    volumes:
+      - ${DATA_DIR}/homebridge:/homebridge
+
+  z2m:
+    image: koenkk/zigbee2mqtt:2.1.1
+    environment:
+      - TZ=Europe/Helsinki
+    group_add:
+    - dialout
+    user: ${LOCAL_UID}:${LOCAL_GID}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${DATA_DIR}/zigbee2mqtt/data:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - ${ADAPTER_PATH}:/dev/ttyACM0
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
 
 volumes:
   mosquitto-conf:
