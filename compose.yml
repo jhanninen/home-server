@@ -1,0 +1,33 @@
+services:
+  mosquitto_init:
+    image: eclipse-mosquitto:2.0.20
+    environment:
+    - MQTT_USER=${MQTT_USER}
+    - MQTT_PASSWORD=${MQTT_PASSWORD}
+    volumes:
+      - mosquitto-conf:/mosquitto-conf
+      - ./mosquitto/:/init-conf/
+    command: >
+      sh -c "echo 'Create configurations for mosquitto server'
+      && cp /init-conf/mosquitto.conf /mosquitto-conf/mosquitto.conf
+      && touch /mosquitto-conf/passwd
+      && chmod 0700 /mosquitto-conf/passwd
+      && mosquitto_passwd -b /mosquitto-conf/passwd ${MQTT_USER} ${MQTT_PASSWORD}
+      && echo 'Done!'"
+    restart: no
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0.20
+    volumes:
+      - mosquitto-conf:/mosquitto/config/
+      - ${DATA_DIR}/mosquitto/data:/mosquitto/data
+      - ${DATA_DIR}/mosquitto/log:/mosquitto/log
+    ports:
+      - "1883:1883"
+    depends_on:
+      mosquitto_init:
+        condition: service_completed_successfully
+    restart: always
+
+volumes:
+  mosquitto-conf:
