@@ -28,6 +28,11 @@ services:
       mosquitto_init:
         condition: service_completed_successfully
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+
 
   homebridge:
     image: homebridge/homebridge:2025-01-11
@@ -36,6 +41,11 @@ services:
     network_mode: host
     volumes:
       - ${DATA_DIR}/homebridge:/homebridge
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 384M
 
   z2m:
     image: koenkk/zigbee2mqtt:2.1.1
@@ -54,6 +64,11 @@ services:
     depends_on:
       - mosquitto
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
 
 volumes:
   mosquitto-conf:
