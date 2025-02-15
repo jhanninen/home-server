@@ -31,7 +31,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 32M
 
 
   homebridge:
@@ -45,7 +45,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 256M
 
   z2m:
     image: koenkk/zigbee2mqtt:2.1.1
@@ -67,7 +67,30 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
+          memory: 256M
+
+  node-red:
+    image: nodered/node-red:4.0.8-22-minimal
+    environment:
+      - TZ=Europe/Helsinki
+    user: ${LOCAL_UID}:${LOCAL_GID}
+    ports:
+      - "1880:1880"
+    volumes:
+      - ${DATA_DIR}/node-red:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  redis:
+    image: redis:7.4.2-alpine
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 32M
 
 
 volumes:
