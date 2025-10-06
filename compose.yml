@@ -1,6 +1,6 @@
 services:
   mosquitto_init:
-    image: eclipse-mosquitto:2.0.20
+    image: eclipse-mosquitto:2.0.22
     environment:
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASSWORD=${MQTT_PASSWORD}
@@ -17,7 +17,7 @@ services:
     restart: no
 
   mosquitto:
-    image: eclipse-mosquitto:2.0.20
+    image: eclipse-mosquitto:2.0.22
     volumes:
       - mosquitto-conf:/mosquitto/config/
       - ${DATA_DIR}/mosquitto/data:/mosquitto/data
@@ -35,7 +35,7 @@ services:
 
 
   homebridge:
-    image: homebridge/homebridge:2025-01-11
+    image: homebridge/homebridge:2025-09-28
     environment:
       - TZ=Europe/Helsinki
     network_mode: host
@@ -48,7 +48,7 @@ services:
           memory: 256M
 
   z2m:
-    image: koenkk/zigbee2mqtt:2.1.1
+    image: koenkk/zigbee2mqtt:2.6.3
     environment:
       - TZ=Europe/Helsinki
     group_add:
@@ -70,7 +70,7 @@ services:
           memory: 256M
 
   node-red:
-    image: nodered/node-red:4.0.8-22-minimal
+    image: nodered/node-red:4.1.0-22-minimal
     environment:
       - TZ=Europe/Helsinki
     user: ${LOCAL_UID}:${LOCAL_GID}
@@ -85,7 +85,7 @@ services:
           memory: 256M
 
   redis:
-    image: redis:7.4.2-alpine
+    image: redis:8.2.2-alpine
     restart: unless-stopped
     deploy:
       resources:
